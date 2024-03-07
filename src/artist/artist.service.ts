@@ -9,6 +9,7 @@ export class ArtistService {
   createArtist(artist: Omit<ArtistDto, 'id'>) {
     const newArtist = { ...artist, id: uuidv4() };
     this.artists.push(newArtist);
+    return newArtist
   }
 
   getAllArtists(): ArtistDto[] {
@@ -22,10 +23,10 @@ export class ArtistService {
 
   updateArtist(
     updatedArtist: Partial<Pick<ArtistDto, 'id'>> &
-      Partial<Omit<ArtistDto, 'id'>>,
+      Partial<Omit<ArtistDto, 'id'>>, id: string
   ): ArtistDto {
     const findArtistIndex = this.artists.findIndex(
-      (t) => t.id === updatedArtist.id,
+      (t) => t.id === id,
     );
     this.artists[findArtistIndex] = {
       ...this.artists[findArtistIndex],

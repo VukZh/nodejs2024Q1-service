@@ -3,7 +3,11 @@ import { FavoritesDto } from '../dto/favorites.dto';
 
 @Injectable()
 export class FavoritesService {
-  private readonly favorites: FavoritesDto;
+  private readonly favorites: FavoritesDto = {
+    artists: [],
+    albums: [],
+    tracks: []
+  };
 
   getFavorites(): FavoritesDto {
     return this.favorites;

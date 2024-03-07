@@ -6,9 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 export class TrackService {
   private readonly tracks: TrackDto[] = [];
 
-  createTrack(track: Omit<TrackDto, 'id'>) {
+  createTrack(track: TrackDto) {
     const newTrack = { ...track, id: uuidv4() };
     this.tracks.push(newTrack);
+    return newTrack
   }
 
   getAllTracks(): TrackDto[] {
@@ -21,10 +22,10 @@ export class TrackService {
   }
 
   updateTrack(
-    updatedTrack: Partial<Pick<TrackDto, 'id'>> & Partial<Omit<TrackDto, 'id'>>,
+    updatedTrack: TrackDto, id: string
   ): TrackDto {
     const findTrackIndex = this.tracks.findIndex(
-      (t) => t.id === updatedTrack.id,
+      (t) => t.id === id,
     );
     this.tracks[findTrackIndex] = {
       ...this.tracks[findTrackIndex],

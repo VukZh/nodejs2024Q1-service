@@ -1,14 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { UserDto } from '../dto/user.dto';
+import { CreateUserDto, UpdatePasswordDto, UserDto } from '../dto/user.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UserService {
   private readonly users: UserDto[] = [];
 
-  createUser(post: Omit<UserDto, 'id'>) {
-    const newUser = { ...post, id: uuidv4() };
+  createUser(user: CreateUserDto) {
+    const newUser: UserDto = {
+      id: uuidv4(),
+      login: user.login,
+      password: user.password,
+      version: 0,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
     this.users.push(newUser);
+    return newUser;
   }
 
   getAllUsers(): UserDto[] {
@@ -20,14 +28,15 @@ export class UserService {
     return findUser;
   }
 
-  updateUser(
-    updatedUser: Partial<Pick<UserDto, 'id'>> & Partial<Omit<UserDto, 'id'>>,
-  ): UserDto {
-    const findUserIndex = this.users.findIndex((u) => u.id === updatedUser.id);
-    this.users[findUserIndex] = {
+  updateUser(updatedUser: UpdatePasswordDto, id: string): UserDto {
+    const findUserIndex = this.users.findIndex((u) => u.id === id);
+    const findUser = {
       ...this.users[findUserIndex],
-      ...updatedUser,
+      password: updatedUser.newPassword,
+      version: this.users[findUserIndex].version++,
+      updatedAt: Date.now(),
     };
+    this.users[findUserIndex] = { ...findUser };
     return this.users[findUserIndex];
   }
 

@@ -11,7 +11,7 @@ import { FavoritesModule } from './favorites/favorites.module';
 
 @Module({
   imports: [UserModule, ArtistModule, TrackModule, AlbumModule, FavoritesModule],
-  controllers: [AppController, ArtistController, AlbumController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

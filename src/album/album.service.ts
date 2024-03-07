@@ -9,6 +9,7 @@ export class AlbumService {
   createTrack(album: Omit<AlbumDto, 'id'>) {
     const newAlbum = { ...album, id: uuidv4() };
     this.albums.push(newAlbum);
+    return newAlbum
   }
 
   getAllAlbums(): AlbumDto[] {
@@ -21,10 +22,10 @@ export class AlbumService {
   }
 
   updateAlbum(
-    updatedAlbum: Partial<Pick<AlbumDto, 'id'>> & Partial<Omit<AlbumDto, 'id'>>,
+    updatedAlbum: Partial<Pick<AlbumDto, 'id'>> & Partial<Omit<AlbumDto, 'id'>>, id: string
   ): AlbumDto {
     const findAlbumIndex = this.albums.findIndex(
-      (t) => t.id === updatedAlbum.id,
+      (t) => t.id === id,
     );
     this.albums[findAlbumIndex] = {
       ...this.albums[findAlbumIndex],
