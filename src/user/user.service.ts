@@ -1,48 +1,82 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto, UpdatePasswordDto, UserDto } from '../dto/user.dto';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException
+} from "@nestjs/common";
+import { CreateUserDto, UpdatePasswordDto, UserDto, UserDtoWithoutId } from "../dto/user.dto";
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UserService {
   private readonly users: UserDto[] = [];
 
-  createUser(user: CreateUserDto) {
+  createUser(user: CreateUserDto): UserDtoWithoutId {
     const newUser: UserDto = {
       id: uuidv4(),
       login: user.login,
       password: user.password,
-      version: 0,
+      version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
     this.users.push(newUser);
-    return newUser;
+    const responseUser = {...newUser};
+    delete responseUser.password
+    return responseUser;
   }
 
-  getAllUsers(): UserDto[] {
-    return this.users;
+  getAllUsers(): UserDtoWithoutId[] {
+    const responseUsers = this.users.map((u) => {
+      const newU = {...u};
+      delete newU.password
+      return newU
+    })
+    return responseUsers;
   }
 
-  getUser(id: string): UserDto {
+  getUser(id: string): UserDtoWithoutId {
+    if (!this.users.some(u => u.id === id)) {
+      throw new NotFoundException()
+    }
     const findUser = this.users.find((u) => u.id === id);
-    return findUser;
+    const responseUser = {...findUser};
+    delete responseUser.password
+    return responseUser;
   }
 
-  updateUser(updatedUser: UpdatePasswordDto, id: string): UserDto {
+  updateUser(updatedUser: UpdatePasswordDto, id: string): UserDtoWithoutId {
+    console.log("........", updatedUser);
+    if (!Object.keys(updatedUser).length) {
+      throw new BadRequestException()
+    }
     const findUserIndex = this.users.findIndex((u) => u.id === id);
+    if (findUserIndex === -1) {
+      throw new NotFoundException()
+    }
+    if (this.users[findUserIndex].password !== updatedUser.oldPassword) {
+      throw new ForbiddenException()
+    }
     const findUser = {
       ...this.users[findUserIndex],
       password: updatedUser.newPassword,
-      version: this.users[findUserIndex].version++,
+      version: this.users[findUserIndex].version + 1,
       updatedAt: Date.now(),
     };
     this.users[findUserIndex] = { ...findUser };
-    return this.users[findUserIndex];
+    const responseUser = {...findUser};
+    delete responseUser.password
+    return responseUser;
   }
 
-  deleteUser(id: string): boolean {
+  deleteUser(id: string): HttpException {
     const findUserIndex = this.users.findIndex((u) => u.id === id);
+    if (findUserIndex === -1) {
+      throw new NotFoundException()
+    }
     this.users.splice(findUserIndex, 1);
-    return findUserIndex !== -1 ? true : false;
+    throw new HttpException('', HttpStatus.NO_CONTENT);
   }
 }

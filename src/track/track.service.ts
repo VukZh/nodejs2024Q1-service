@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { TrackDto } from '../dto/track.dto';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -17,6 +17,9 @@ export class TrackService {
   }
 
   getTrack(id: string): TrackDto {
+    if (!this.tracks.some(t => t.id === id)) {
+      throw new NotFoundException()
+    }
     const findTrack = this.tracks.find((t) => t.id === id);
     return findTrack;
   }
@@ -27,6 +30,10 @@ export class TrackService {
     const findTrackIndex = this.tracks.findIndex(
       (t) => t.id === id,
     );
+    console.log("findTrackIndex", findTrackIndex);
+    if (findTrackIndex === -1) {
+      throw new NotFoundException()
+    }
     this.tracks[findTrackIndex] = {
       ...this.tracks[findTrackIndex],
       ...updatedTrack,
@@ -34,9 +41,12 @@ export class TrackService {
     return this.tracks[findTrackIndex];
   }
 
-  deleteTrack(id: string): boolean {
+  deleteTrack(id: string): HttpException {
     const findTrackIndex = this.tracks.findIndex((t) => t.id === id);
+    if (findTrackIndex === -1) {
+      throw new NotFoundException()
+    }
     this.tracks.splice(findTrackIndex, 1);
-    return findTrackIndex !== -1 ? true : false;
+    throw new HttpException('', HttpStatus.NO_CONTENT);
   }
 }

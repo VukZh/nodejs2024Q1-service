@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { FavoritesDto } from '../dto/favorites.dto';
 
 @Injectable()
@@ -29,6 +29,9 @@ export class FavoritesService {
     const findTrackIndex = this.favorites.tracks.findIndex(
       (t) => t === trackId,
     );
+    if (findTrackIndex === -1) {
+      throw new NotFoundException()
+    }
     this.favorites.tracks.splice(findTrackIndex, 1);
   }
 
@@ -36,6 +39,9 @@ export class FavoritesService {
     const findAlbumIndex = this.favorites.albums.findIndex(
       (a) => a === albumId,
     );
+    if (findAlbumIndex === -1) {
+      throw new NotFoundException()
+    }
     this.favorites.albums.splice(findAlbumIndex, 1);
   }
 
@@ -43,6 +49,9 @@ export class FavoritesService {
     const findArtistIndex = this.favorites.artists.findIndex(
       (a) => a === artistId,
     );
+    if (findArtistIndex === -1) {
+      throw new NotFoundException()
+    }
     this.favorites.artists.splice(findArtistIndex, 1);
   }
 }

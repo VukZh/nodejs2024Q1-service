@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put, UsePipes, ValidationPipe
+} from "@nestjs/common";
 import { TrackService } from "./track.service";
 import { TrackDto } from "../dto/track.dto";
 
@@ -12,23 +23,25 @@ export class TrackController {
     return this.trackService.getAllTracks();
   };
 
-  @Get(":/id")
-  async getTrack(@Param("id") id: string): Promise<TrackDto> {
+  @Get("/:id")
+  async getTrack(@Param("id", ParseUUIDPipe) id: string): Promise<TrackDto> {
     return this.trackService.getTrack(id);
   };
+
+  // @UsePipes(new ValidationPipe())
 
   @Post()
   async addTrack(@Body() body: TrackDto ): Promise<TrackDto> {
     return this.trackService.createTrack(body);
   };
 
-  @Put(":/id")
-  async changeTrack(@Body() body: TrackDto , @Param("id") id: string): Promise<TrackDto> {
+  @Put("/:id")
+  async changeTrack(@Body() body: TrackDto , @Param("id", ParseUUIDPipe) id: string): Promise<TrackDto> {
     return this.trackService.updateTrack(body, id);
   };
 
-  @Delete(":/id")
-  async deleteTrack(@Param("id") id: string): Promise<boolean> {
+  @Delete("/:id")
+  async deleteTrack(@Param("id", ParseUUIDPipe) id: string): Promise<HttpException> {
     return this.trackService.deleteTrack(id);
   };
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { v4 as uuidv4 } from 'uuid';
 import { ArtistDto } from '../dto/artist.dto';
 
@@ -7,6 +7,9 @@ export class ArtistService {
   private readonly artists: ArtistDto[] = [];
 
   createArtist(artist: Omit<ArtistDto, 'id'>) {
+    if (!Object.keys(artist).length) {
+      throw new BadRequestException()
+    }
     const newArtist = { ...artist, id: uuidv4() };
     this.artists.push(newArtist);
     return newArtist
@@ -17,6 +20,9 @@ export class ArtistService {
   }
 
   getArtist(id: string): ArtistDto {
+    if (!this.artists.some(a => a.id === id)) {
+      throw new NotFoundException()
+    }
     const findArtist = this.artists.find((a) => a.id === id);
     return findArtist;
   }
@@ -28,6 +34,9 @@ export class ArtistService {
     const findArtistIndex = this.artists.findIndex(
       (t) => t.id === id,
     );
+    if (findArtistIndex === -1) {
+      throw new NotFoundException()
+    }
     this.artists[findArtistIndex] = {
       ...this.artists[findArtistIndex],
       ...updatedArtist,
@@ -35,9 +44,12 @@ export class ArtistService {
     return this.artists[findArtistIndex];
   }
 
-  deleteArtist(id: string): boolean {
+  deleteArtist(id: string): HttpException {
     const findArtistIndex = this.artists.findIndex((a) => a.id === id);
+    if (findArtistIndex === -1) {
+      throw new NotFoundException()
+    }
     this.artists.splice(findArtistIndex, 1);
-    return findArtistIndex !== -1 ? true : false;
+    throw new HttpException('', HttpStatus.NO_CONTENT);
   }
 }
