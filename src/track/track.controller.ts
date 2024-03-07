@@ -28,13 +28,13 @@ export class TrackController {
     return this.trackService.getTrack(id);
   };
 
-  // @UsePipes(new ValidationPipe())
-
+  @UsePipes(new ValidationPipe())
   @Post()
   async addTrack(@Body() body: TrackDto ): Promise<TrackDto> {
     return this.trackService.createTrack(body);
   };
 
+  @UsePipes(new ValidationPipe())
   @Put("/:id")
   async changeTrack(@Body() body: TrackDto , @Param("id", ParseUUIDPipe) id: string): Promise<TrackDto> {
     return this.trackService.updateTrack(body, id);

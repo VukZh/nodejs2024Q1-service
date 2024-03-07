@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { TrackDto } from '../dto/track.dto';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -27,6 +27,9 @@ export class TrackService {
   updateTrack(
     updatedTrack: TrackDto, id: string
   ): TrackDto {
+    if (!Object.keys(updatedTrack).length) {
+      throw new BadRequestException()
+    }
     const findTrackIndex = this.tracks.findIndex(
       (t) => t.id === id,
     );

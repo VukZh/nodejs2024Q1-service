@@ -2,9 +2,9 @@ import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class TrackDto {
   @IsString()
+  @IsOptional()
   id: string;
   @IsString()
-  @IsOptional()
   name: string;
   @IsString()
   @IsOptional()
@@ -13,6 +13,5 @@ export class TrackDto {
   @IsOptional()
   albumId: string | null;
   @IsNumber()
-  @IsOptional()
   duration: number;
 }
