@@ -1,12 +1,11 @@
-import { IsBoolean, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class ArtistDto {
+  @IsOptional()
   @IsString()
   id: string;
-  @IsOptional()
   @IsString()
   name: string;
-  @IsOptional()
   @IsBoolean()
   grammy: boolean;
 }

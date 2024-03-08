@@ -58,4 +58,13 @@ export class AlbumService {
     this.trackService.deleteAlbumId(id);
     throw new HttpException('', HttpStatus.NO_CONTENT);
   }
+  deleteArtistId(id: string) {
+    const foundTrackIndex = this.albums.findIndex((t) => t.artistId === id);
+    console.log("0>", id, this, foundTrackIndex);
+    if (foundTrackIndex !== -1) {
+      this.albums[foundTrackIndex].artistId = null;
+    }
+    console.log("1>", id, this);
+  }
+
 }

@@ -27,7 +27,7 @@ export class TrackService {
       throw new NotFoundException();
     }
     const findTrack = this.tracks.find((t) => t.id === id);
-    console.log("hmm", this);
+    // console.log("hmm", this);
     return findTrack;
   }
 
@@ -58,10 +58,11 @@ export class TrackService {
 
   deleteArtistId(id: string) {
     const foundTrackIndex = this.tracks.findIndex((t) => t.artistId === id);
-    console.log(">>", id, this);
+    // console.log("0>", id, this, foundTrackIndex);
     if (foundTrackIndex !== -1) {
-      this.tracks[foundTrackIndex].artistId === null;
+      this.tracks[foundTrackIndex].artistId = null;
     }
+    // console.log("1>", id, this);
   }
 
   deleteAlbumId(id: string) {
