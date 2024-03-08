@@ -30,14 +30,13 @@ export class AlbumController {
     return this.albumService.getAlbum(id);
   };
 
-  // @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe())
   @Post()
-  async addAlbum(@Body() body: AlbumDto ): Promise<AlbumDto> {
-    console.log(">>>", body);
-    return this.albumService.createTrack(body);
+  async createAlbum(@Body() body: AlbumDto ): Promise<AlbumDto> {
+    return this.albumService.createAlbum(body);
   };
 
-  // @UsePipes(new ValidationPipe())
+  @UsePipes(new ValidationPipe())
   @Put("/:id")
   async changeAlbum(@Body() body: AlbumDto , @Param("id", ParseUUIDPipe) id: string): Promise<AlbumDto> {
     return this.albumService.updateAlbum(body, id);

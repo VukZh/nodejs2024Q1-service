@@ -2,12 +2,11 @@ import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class AlbumDto {
   @IsString()
+  @IsOptional()
   id: string;
   @IsString()
-  @IsOptional()
   name: string;
   @IsNumber()
-  @IsOptional()
   year: number;
   @IsString()
   @IsOptional()
