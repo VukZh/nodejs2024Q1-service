@@ -48,7 +48,6 @@ export class UserService {
   }
 
   updateUser(updatedUser: UpdatePasswordDto, id: string): UserDtoWithoutId {
-    console.log("........", updatedUser);
     if (!Object.keys(updatedUser).length) {
       throw new BadRequestException()
     }

@@ -1,7 +1,7 @@
 import { Controller, Delete, Get, Param, ParseUUIDPipe, Post } from "@nestjs/common";
 
 import { FavoritesService } from "./favorites.service";
-import { FavoritesDto } from "../dto/favorites.dto";
+import { FavoritesDto, FavoritesResponse } from "../dto/favorites.dto";
 
 @Controller('favs')
 export class FavoritesController {
@@ -9,7 +9,7 @@ export class FavoritesController {
   }
 
   @Get()
-  async getFavorites(): Promise<FavoritesDto> {
+  async getFavorites(): Promise<FavoritesResponse> {
     return this.favoritesService.getFavorites();
   };
 
@@ -28,17 +28,18 @@ export class FavoritesController {
     return this.favoritesService.addArtist(id);
   };
 
-  @Delete("/:id")
+  @Delete("track/:id")
   async deleteTrack(@Param("id", ParseUUIDPipe) id: string): Promise<void> {
+    console.log("000 ", id);
     return this.favoritesService.deleteTrack(id);
   };
 
-  @Delete("/:id")
+  @Delete("album/:id")
   async deleteAlbum(@Param("id", ParseUUIDPipe) id: string): Promise<void> {
     return this.favoritesService.deleteAlbum(id);
   };
 
-  @Delete("/:id")
+  @Delete("artist/:id")
   async deleteArtist(@Param("id", ParseUUIDPipe) id: string): Promise<void> {
     return this.favoritesService.deleteArtist(id);
   };
