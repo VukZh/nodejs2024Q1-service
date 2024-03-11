@@ -44,7 +44,7 @@ export class FavoritesService {
     };
   }
 
-  addTrack(trackId: string) {
+  addTrackToFavs(trackId: string) {
     if (
       !this.trackService
         .getAllTracks()
@@ -56,7 +56,7 @@ export class FavoritesService {
     this.favorites.tracks.push(trackId);
   }
 
-  addAlbum(albumId: string) {
+  addAlbumToFavs(albumId: string) {
     if (
       !this.albumService
         .getAllAlbums()
@@ -68,7 +68,7 @@ export class FavoritesService {
     this.favorites.albums.push(albumId);
   }
 
-  addArtist(artistId: string) {
+  addArtistToFavs(artistId: string) {
     if (
       !this.artistService
         .getAllArtists()
@@ -80,7 +80,7 @@ export class FavoritesService {
     this.favorites.artists.push(artistId);
   }
 
-  deleteTrack(trackId: string) {
+  deleteTrackFromFavs(trackId: string) {
     const findTrackIndex = this.favorites.tracks.findIndex(
       (t) => t === trackId,
     );
@@ -90,7 +90,7 @@ export class FavoritesService {
     this.favorites.tracks.splice(findTrackIndex, 1);
   }
 
-  deleteAlbum(albumId: string) {
+  deleteAlbumFromFavs(albumId: string) {
     const findAlbumIndex = this.favorites.albums.findIndex(
       (a) => a === albumId,
     );
@@ -100,7 +100,7 @@ export class FavoritesService {
     this.favorites.albums.splice(findAlbumIndex, 1);
   }
 
-  deleteArtist(artistId: string) {
+  deleteArtistFromFavs(artistId: string) {
     const findArtistIndex = this.favorites.artists.findIndex(
       (a) => a === artistId,
     );

@@ -14,27 +14,51 @@ import {
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { ArtistDto } from '../dto/artist.dto';
+import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+} from '@nestjs/swagger/dist/decorators/api-response.decorator';
+import { AlbumDto } from '../dto/album.dto';
 
 @Controller('artist')
+@ApiTags('artist')
 export class ArtistController {
   constructor(private artistService: ArtistService) {}
 
+  @ApiOkResponse({ status: 200, description: 'Artists received' })
   @Get()
   async getAllArtists(): Promise<ArtistDto[]> {
     return this.artistService.getAllArtists();
   }
 
+  @ApiOkResponse({ status: 200, description: 'Artist is retrieved by his id' })
+  @ApiBadRequestResponse({ status: 400, description: 'Artist`s ID is invalid' })
+  @ApiNotFoundResponse({ status: 404, description: 'Artist doesn`t exist' })
   @Get('/:id')
   async getArtist(@Param('id', ParseUUIDPipe) id: string): Promise<ArtistDto> {
     return this.artistService.getArtist(id);
   }
 
+  @ApiCreatedResponse({
+    status: 201,
+    description: 'Artist created',
+    type: ArtistDto,
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'Artist`s body does not contain required fields',
+  })
   @UsePipes(new ValidationPipe())
   @Post()
   async addArtist(@Body() body: ArtistDto): Promise<ArtistDto> {
     return this.artistService.createArtist(body);
   }
 
+  @ApiOkResponse({ status: 200, description: 'Artist updated' })
+  @ApiBadRequestResponse({ status: 400, description: 'Artist`s ID is invalid' })
+  @ApiNotFoundResponse({ status: 404, description: 'Artist doesn`t exist' })
   @UsePipes(new ValidationPipe())
   @Put('/:id')
   async changeArtist(
@@ -44,6 +68,9 @@ export class ArtistController {
     return this.artistService.updateArtist(body, id);
   }
 
+  @ApiResponse({ status: 204, description: 'Artist deleted' })
+  @ApiBadRequestResponse({ status: 400, description: 'Artist`s ID is invalid' })
+  @ApiNotFoundResponse({ status: 404, description: 'Artist doesn`t exist' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   async deleteArtist(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
