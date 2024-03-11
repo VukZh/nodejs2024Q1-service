@@ -3,7 +3,8 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Post,
@@ -43,10 +44,9 @@ export class ArtistController {
     return this.artistService.updateArtist(body, id);
   }
 
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
-  async deleteArtist(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<HttpException> {
+  async deleteArtist(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.artistService.deleteArtist(id);
   }
 }

@@ -1,10 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { AlbumDto } from '../dto/album.dto';
 import { TrackService } from '../track/track.service';
@@ -49,20 +43,19 @@ export class AlbumService {
     return this.albums[findAlbumIndex];
   }
 
-  deleteAlbum(id: string): HttpException {
+  deleteAlbum(id: string) {
     const findAlbumIndex = this.albums.findIndex((a) => a.id === id);
     if (findAlbumIndex === -1) {
       throw new NotFoundException();
     }
     this.albums.splice(findAlbumIndex, 1);
     this.trackService.deleteAlbumId(id);
-    throw new HttpException('', HttpStatus.NO_CONTENT);
   }
+
   deleteArtistId(id: string) {
     const foundTrackIndex = this.albums.findIndex((t) => t.artistId === id);
     if (foundTrackIndex !== -1) {
       this.albums[foundTrackIndex].artistId = null;
     }
   }
-
 }

@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -45,13 +43,12 @@ export class TrackService {
     return this.tracks[findTrackIndex];
   }
 
-  deleteTrack(id: string): HttpException {
+  deleteTrack(id: string) {
     const findTrackIndex = this.tracks.findIndex((t) => t.id === id);
     if (findTrackIndex === -1) {
       throw new NotFoundException();
     }
     this.tracks.splice(findTrackIndex, 1);
-    throw new HttpException('', HttpStatus.NO_CONTENT);
   }
 
   deleteArtistId(id: string) {

@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UserDto {
   @IsString()
@@ -34,4 +34,4 @@ export class UpdatePasswordDto {
   newPassword: string;
 }
 
-export type UserDtoWithoutId = Omit<UserDto, "id">
+export type UserDtoWithoutId = Omit<UserDto, 'id'>;

@@ -1,6 +1,6 @@
-import { ArtistDto } from "./artist.dto";
-import { AlbumDto } from "./album.dto";
-import { TrackDto } from "./track.dto";
+import { ArtistDto } from './artist.dto';
+import { AlbumDto } from './album.dto';
+import { TrackDto } from './track.dto';
 
 export class FavoritesDto {
   artists: string[];
@@ -8,7 +8,7 @@ export class FavoritesDto {
   tracks: string[];
 }
 
-export interface FavoritesResponse{
+export interface FavoritesResponse {
   artists: ArtistDto[];
   albums: AlbumDto[];
   tracks: TrackDto[];

@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -9,7 +7,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import { ArtistDto } from '../dto/artist.dto';
 import { TrackService } from '../track/track.service';
-import { AlbumService } from "../album/album.service";
+import { AlbumService } from '../album/album.service';
 
 @Injectable()
 export class ArtistService {
@@ -18,9 +16,6 @@ export class ArtistService {
 
   @Inject(AlbumService)
   private readonly albumService: AlbumService;
-
-  // @Inject(TrackService)
-  // private readonly trackService: TrackService;
 
   private readonly artists: ArtistDto[] = [];
 
@@ -61,7 +56,7 @@ export class ArtistService {
     return this.artists[findArtistIndex];
   }
 
-  deleteArtist(id: string): HttpException {
+  deleteArtist(id: string) {
     const findArtistIndex = this.artists.findIndex((a) => a.id === id);
     if (findArtistIndex === -1) {
       throw new NotFoundException();
@@ -69,6 +64,5 @@ export class ArtistService {
     this.artists.splice(findArtistIndex, 1);
     this.trackService.deleteArtistId(id);
     this.albumService.deleteArtistId(id);
-    throw new HttpException('', HttpStatus.NO_CONTENT);
   }
 }
