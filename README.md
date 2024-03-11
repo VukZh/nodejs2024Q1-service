@@ -1,6 +1,5 @@
 # Home Library Service
 
-
 ## Downloading
 
 ```
@@ -11,6 +10,7 @@ git clone {repository URL}
 
 ```
 npm install
+make a copy .env from .env_ file
 ```
 
 ## Running application
@@ -39,14 +39,9 @@ To run only one of all test suites
 npm run test -- <path to suite>
 ```
 
-To run all test with authorization
 
-```
-npm run test:auth
-```
+## Swagger
 
-To run only specific test suite with authorization
+After running the application, open the link:
 
-```
-npm run test:auth -- <path to suite>
-```
+http://localhost:4000/api

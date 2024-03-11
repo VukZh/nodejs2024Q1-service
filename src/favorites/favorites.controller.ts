@@ -74,7 +74,6 @@ export class FavoritesController {
   async deleteTrackFromFavs(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    console.log('000 ', id);
     return this.favoritesService.deleteTrackFromFavs(id);
   }
 

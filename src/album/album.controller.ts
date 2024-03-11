@@ -14,12 +14,7 @@ import {
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { AlbumDto } from '../dto/album.dto';
-import {
-  ApiCreatedResponse,
-  ApiResponse,
-  ApiTags,
-  OmitType,
-} from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,

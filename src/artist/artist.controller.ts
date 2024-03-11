@@ -20,7 +20,6 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
 } from '@nestjs/swagger/dist/decorators/api-response.decorator';
-import { AlbumDto } from '../dto/album.dto';
 
 @Controller('artist')
 @ApiTags('artist')
