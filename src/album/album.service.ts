@@ -1,55 +1,122 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { v4 as uuidv4 } from 'uuid';
 import { AlbumDto } from '../dto/album.dto';
 import { TrackService } from '../track/track.service';
+import { PrismaService } from "../prisma.service";
 
 @Injectable()
 export class AlbumService {
+  constructor(private prisma: PrismaService) {}
+
   @Inject(TrackService)
   private readonly trackService: TrackService;
 
   private readonly albums: AlbumDto[] = [];
 
-  createAlbum(album: Omit<AlbumDto, 'id'>) {
+  async createAlbum(album: Omit<AlbumDto, 'id'>) {
+
     const newAlbum = { ...album, id: uuidv4() };
-    this.albums.push(newAlbum);
-    return newAlbum;
+
+    await this.prisma.albums.create({
+      data: {
+        id: newAlbum.id,
+        name: newAlbum.name,
+        year: newAlbum.year,
+        artist_id: newAlbum.artistId
+      },
+    });
+
+    const addedAlbum = await this.prisma.albums.findUnique({
+      where: { id: newAlbum.id },
+    });
+    const responseAlbum = {
+      id: addedAlbum.id,
+      name: addedAlbum.name,
+      year: addedAlbum.year,
+      artistId: addedAlbum.artist_id
+
+    };
+    return responseAlbum;
+
   }
 
-  getAllAlbums(): AlbumDto[] {
-    return this.albums;
+  async getAllAlbums(): Promise<AlbumDto[]> {
+
+    const responseAlbums = await this.prisma.albums.findMany();
+
+    const allAlbums = responseAlbums.map((a) => ({
+      id: a.id,
+      name: a.name,
+      year: a.year,
+      artistId: a.artist_id
+    }));
+    return allAlbums;
+
   }
 
-  getAlbum(id: string): AlbumDto {
-    if (!this.albums.some((a) => a.id === id)) {
+  async getAlbum(id: string): Promise<AlbumDto> {
+
+    const findAlbum = await this.prisma.albums.findUnique({
+      where: { id: id },
+    });
+    if (!findAlbum?.id) {
       throw new NotFoundException();
     }
-    const findAlbum = this.albums.find((a) => a.id === id);
-    return findAlbum;
+    const responseAlbum = {
+      id: findAlbum.id,
+      name: findAlbum.name,
+      year: findAlbum.year,
+      artistId: findAlbum.artist_id
+    };
+    return responseAlbum;
+
   }
 
-  updateAlbum(
+  async updateAlbum(
     updatedAlbum: Partial<Pick<AlbumDto, 'id'>> & Partial<Omit<AlbumDto, 'id'>>,
     id: string,
-  ): AlbumDto {
-    const findAlbumIndex = this.albums.findIndex((t) => t.id === id);
-    if (findAlbumIndex === -1) {
+  ): Promise<AlbumDto> {
+
+    if (!Object.keys(updatedAlbum).length) {
+      throw new BadRequestException();
+    }
+    const findAlbum = await this.prisma.albums.findUnique({ where: { id: id } });
+
+    if (!findAlbum?.id) {
       throw new NotFoundException();
     }
-    this.albums[findAlbumIndex] = {
-      ...this.albums[findAlbumIndex],
-      ...updatedAlbum,
+
+    await this.prisma.albums.update({
+      where: { id: id },
+      data: {
+        name: updatedAlbum.name,
+        year: updatedAlbum.year,
+        artist_id: updatedAlbum.artistId
+      },
+    });
+
+    const changedAlbum = await this.prisma.albums.findUnique({
+      where: { id: id },
+    });
+    const responseAlbum = {
+      id: changedAlbum.id,
+      name: changedAlbum.name,
+      year: changedAlbum.year,
+      artistId: changedAlbum.artist_id,
     };
-    return this.albums[findAlbumIndex];
+    return responseAlbum;
+
   }
 
-  deleteAlbum(id: string) {
-    const findAlbumIndex = this.albums.findIndex((a) => a.id === id);
-    if (findAlbumIndex === -1) {
+  async deleteAlbum(id: string) {
+    const findAlbum = await this.prisma.albums.findUnique({
+      where: { id: id },
+    });
+    if (!findAlbum?.id) {
       throw new NotFoundException();
     }
-    this.albums.splice(findAlbumIndex, 1);
-    this.trackService.deleteAlbumId(id);
+    await this.prisma.albums.delete({ where: { id: id } });
+    return;
   }
 
   deleteArtistId(id: string) {

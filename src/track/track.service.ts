@@ -70,18 +70,6 @@ export class TrackService {
   }
 
   async updateTrack(updatedTrack: TrackDto, id: string): Promise<TrackDto> {
-    // if (!Object.keys(updatedTrack).length) {
-    //   throw new BadRequestException();
-    // }
-    // const findTrackIndex = this.tracks.findIndex((t) => t.id === id);
-    // if (findTrackIndex === -1) {
-    //   throw new NotFoundException();
-    // }
-    // this.tracks[findTrackIndex] = {
-    //   ...this.tracks[findTrackIndex],
-    //   ...updatedTrack,
-    // };
-    // return this.tracks[findTrackIndex];
 
     if (!Object.keys(updatedTrack).length) {
       throw new BadRequestException();

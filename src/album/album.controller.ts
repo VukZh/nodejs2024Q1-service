@@ -29,7 +29,7 @@ export class AlbumController {
   @ApiOkResponse({ status: 200, description: 'Albums received' })
   @Get()
   async getAllAlbums(): Promise<AlbumDto[]> {
-    return this.albumService.getAllAlbums();
+    return await this.albumService.getAllAlbums();
   }
 
   @ApiOkResponse({ status: 200, description: 'Album is retrieved by his id' })
@@ -37,7 +37,7 @@ export class AlbumController {
   @ApiNotFoundResponse({ status: 404, description: 'Album doesn`t exist' })
   @Get('/:id')
   async getAlbum(@Param('id', ParseUUIDPipe) id: string): Promise<AlbumDto> {
-    return this.albumService.getAlbum(id);
+    return await this.albumService.getAlbum(id);
   }
 
   @ApiCreatedResponse({
@@ -52,7 +52,7 @@ export class AlbumController {
   @UsePipes(new ValidationPipe())
   @Post()
   async createAlbum(@Body() body: AlbumDto): Promise<AlbumDto> {
-    return this.albumService.createAlbum(body);
+    return await this.albumService.createAlbum(body);
   }
 
   @ApiOkResponse({ status: 200, description: 'Album updated' })
@@ -64,7 +64,7 @@ export class AlbumController {
     @Body() body: AlbumDto,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<AlbumDto> {
-    return this.albumService.updateAlbum(body, id);
+    return await this.albumService.updateAlbum(body, id);
   }
 
   @ApiResponse({ status: 204, description: 'Album deleted' })
@@ -73,6 +73,6 @@ export class AlbumController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   async deleteAlbum(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.albumService.deleteAlbum(id);
+    return await this.albumService.deleteAlbum(id);
   }
 }
