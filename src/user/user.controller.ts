@@ -16,7 +16,7 @@ import { UserService } from './user.service';
 import {
   CreateUserDto,
   UpdatePasswordDto,
-  UserDtoWithoutId,
+  UserDtoWithoutPassword,
 } from '../dto/user.dto';
 import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
@@ -33,8 +33,8 @@ export class UserController {
 
   @ApiOkResponse({ status: 200, description: 'Users received' })
   @Get()
-  async getAllUsers(): Promise<UserDtoWithoutId[]> {
-    return this.userService.getAllUsers();
+  async getAllUsers(): Promise<UserDtoWithoutPassword[]> {
+    return await this.userService.getAllUsers();
   }
 
   @ApiOkResponse({ status: 200, description: 'User is retrieved by his id' })
@@ -43,7 +43,7 @@ export class UserController {
   @Get('/:id')
   async getUser(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<UserDtoWithoutId> {
+  ): Promise<UserDtoWithoutPassword> {
     return this.userService.getUser(id);
   }
 
@@ -58,8 +58,8 @@ export class UserController {
   })
   @UsePipes(new ValidationPipe())
   @Post()
-  async addUser(@Body() body: CreateUserDto): Promise<UserDtoWithoutId> {
-    return this.userService.createUser(body);
+  async addUser(@Body() body: CreateUserDto): Promise<UserDtoWithoutPassword> {
+    return await this.userService.createUser(body);
   }
 
   @ApiOkResponse({ status: 200, description: 'User updated' })
@@ -73,8 +73,8 @@ export class UserController {
   async changeUser(
     @Body() body: UpdatePasswordDto,
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<UserDtoWithoutId> {
-    return this.userService.updateUser(body, id);
+  ): Promise<UserDtoWithoutPassword> {
+    return await this.userService.updateUser(body, id);
   }
 
   @ApiResponse({ status: 204, description: 'User deleted' })
@@ -83,6 +83,6 @@ export class UserController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   async deleteUser(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.userService.deleteUser(id);
+    return await this.userService.deleteUser(id);
   }
 }

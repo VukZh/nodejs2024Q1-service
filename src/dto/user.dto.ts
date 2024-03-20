@@ -45,3 +45,5 @@ export class UpdatePasswordDto {
 }
 
 export type UserDtoWithoutId = Omit<UserDto, 'id'>;
+
+export type UserDtoWithoutPassword = Omit<UserDto, 'password'>;

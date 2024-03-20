@@ -8,15 +8,18 @@ import {
   CreateUserDto,
   UpdatePasswordDto,
   UserDto,
-  UserDtoWithoutId,
+  UserDtoWithoutPassword,
 } from '../dto/user.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class UserService {
+  constructor(private prisma: PrismaService) {}
+
   private readonly users: UserDto[] = [];
 
-  createUser(user: CreateUserDto): UserDtoWithoutId {
+  async createUser(user: CreateUserDto): Promise<UserDtoWithoutPassword> {
     const newUser: UserDto = {
       id: uuidv4(),
       login: user.login,
@@ -25,59 +28,103 @@ export class UserService {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
-    this.users.push(newUser);
-    const responseUser = { ...newUser };
-    delete responseUser.password;
+
+    await this.prisma.users.create({
+      data: {
+        id: newUser.id,
+        login: newUser.login,
+        password: newUser.password,
+        version: newUser.version,
+        created_at: new Date(newUser.createdAt),
+        updated_at: new Date(newUser.updatedAt),
+      },
+    });
+
+    const addedUser = await this.prisma.users.findUnique({
+      where: { id: newUser.id },
+    });
+    const responseUser = {
+      id: addedUser.id,
+      login: addedUser.login,
+      version: addedUser.version,
+      createdAt: addedUser.created_at.getTime(),
+      updatedAt: addedUser.updated_at.getTime(),
+    };
     return responseUser;
   }
 
-  getAllUsers(): UserDtoWithoutId[] {
-    const responseUsers = this.users.map((u) => {
-      const newU = { ...u };
-      delete newU.password;
-      return newU;
-    });
-    return responseUsers;
+  async getAllUsers(): Promise<UserDtoWithoutPassword[]> {
+    const responseUsers = await this.prisma.users.findMany();
+    const allUsers = responseUsers.map((u) => ({
+      id: u.id,
+      login: u.login,
+      version: u.version,
+      createdAt: u.created_at.getTime(),
+      updatedAt: u.updated_at.getTime(),
+    }));
+    return allUsers;
   }
 
-  getUser(id: string): UserDtoWithoutId {
-    if (!this.users.some((u) => u.id === id)) {
+  async getUser(id: string): Promise<UserDtoWithoutPassword> {
+    const findUser = await this.prisma.users.findUnique({ where: { id: id } });
+    if (!findUser?.id) {
       throw new NotFoundException();
     }
-    const findUser = this.users.find((u) => u.id === id);
-    const responseUser = { ...findUser };
-    delete responseUser.password;
+    const responseUser = {
+      id: findUser.id,
+      login: findUser.login,
+      version: findUser.version,
+      createdAt: findUser.created_at.getTime(),
+      updatedAt: findUser.updated_at.getTime(),
+    };
     return responseUser;
   }
 
-  updateUser(updatedUser: UpdatePasswordDto, id: string): UserDtoWithoutId {
+  async updateUser(
+    updatedUser: UpdatePasswordDto,
+    id: string,
+  ): Promise<UserDtoWithoutPassword> {
     if (!Object.keys(updatedUser).length) {
       throw new BadRequestException();
     }
-    const findUserIndex = this.users.findIndex((u) => u.id === id);
-    if (findUserIndex === -1) {
+    const findUser = await this.prisma.users.findUnique({ where: { id: id } });
+
+    if (!findUser?.id) {
       throw new NotFoundException();
     }
-    if (this.users[findUserIndex].password !== updatedUser.oldPassword) {
+    if (findUser.password !== updatedUser.oldPassword) {
       throw new ForbiddenException();
     }
-    const findUser = {
-      ...this.users[findUserIndex],
-      password: updatedUser.newPassword,
-      version: this.users[findUserIndex].version + 1,
-      updatedAt: Date.now(),
+    await this.prisma.users.update({
+      where: { id: id },
+      data: {
+        password: updatedUser.newPassword,
+        version: findUser.version + 1,
+        updated_at: new Date(),
+      },
+    });
+
+    const changedUser = await this.prisma.users.findUnique({
+      where: { id: id },
+    });
+    const responseUser = {
+      id: changedUser.id,
+      login: changedUser.login,
+      version: changedUser.version,
+      createdAt: changedUser.created_at.getTime(),
+      updatedAt: changedUser.updated_at.getTime(),
     };
-    this.users[findUserIndex] = { ...findUser };
-    const responseUser = { ...findUser };
-    delete responseUser.password;
     return responseUser;
   }
 
-  deleteUser(id: string) {
-    const findUserIndex = this.users.findIndex((u) => u.id === id);
-    if (findUserIndex === -1) {
+  async deleteUser(id: string) {
+    const findUser = await this.prisma.users.findUnique({
+      where: { id: id },
+    });
+    if (!findUser?.id) {
       throw new NotFoundException();
     }
-    this.users.splice(findUserIndex, 1);
+    await this.prisma.users.delete({ where: { id: id } });
+    return;
   }
 }
