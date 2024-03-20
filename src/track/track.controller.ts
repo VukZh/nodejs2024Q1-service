@@ -29,7 +29,7 @@ export class TrackController {
   @ApiOkResponse({ status: 200, description: 'Tracks received' })
   @Get()
   async getAllTracks(): Promise<TrackDto[]> {
-    return this.trackService.getAllTracks();
+    return await this.trackService.getAllTracks();
   }
 
   @ApiOkResponse({ status: 200, description: 'Track is retrieved by his id' })
@@ -37,7 +37,7 @@ export class TrackController {
   @ApiNotFoundResponse({ status: 404, description: 'Track doesn`t exist' })
   @Get('/:id')
   async getTrack(@Param('id', ParseUUIDPipe) id: string): Promise<TrackDto> {
-    return this.trackService.getTrack(id);
+    return await this.trackService.getTrack(id);
   }
 
   @ApiCreatedResponse({
@@ -52,7 +52,7 @@ export class TrackController {
   @UsePipes(new ValidationPipe())
   @Post()
   async addTrack(@Body() body: TrackDto): Promise<TrackDto> {
-    return this.trackService.createTrack(body);
+    return await this.trackService.createTrack(body);
   }
 
   @ApiOkResponse({ status: 200, description: 'Track updated' })
@@ -64,7 +64,7 @@ export class TrackController {
     @Body() body: TrackDto,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<TrackDto> {
-    return this.trackService.updateTrack(body, id);
+    return await this.trackService.updateTrack(body, id);
   }
 
   @ApiOkResponse({ status: 204, description: 'Track deleted' })
@@ -73,6 +73,6 @@ export class TrackController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   async deleteTrack(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.trackService.deleteTrack(id);
+    return await this.trackService.deleteTrack(id);
   }
 }
