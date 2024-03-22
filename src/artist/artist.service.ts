@@ -8,9 +8,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { ArtistDto } from '../dto/artist.dto';
 import { TrackService } from '../track/track.service';
 import { AlbumService } from '../album/album.service';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class ArtistService {
+  constructor(private prisma: PrismaService) {}
+
   @Inject(TrackService)
   private readonly trackService: TrackService;
 
@@ -19,50 +22,86 @@ export class ArtistService {
 
   private readonly artists: ArtistDto[] = [];
 
-  createArtist(artist: Omit<ArtistDto, 'id'>) {
+  async createArtist(artist: Omit<ArtistDto, 'id'>): Promise<ArtistDto> {
     if (!Object.keys(artist).length) {
       throw new BadRequestException();
     }
+
     const newArtist = { ...artist, id: uuidv4() };
-    this.artists.push(newArtist);
-    return newArtist;
+
+    await this.prisma.artists.create({
+      data: {
+        id: newArtist.id,
+        name: newArtist.name,
+        grammy: newArtist.grammy,
+      },
+    });
+
+    const addedArtist = await this.prisma.artists.findUnique({
+      where: { id: newArtist.id },
+    });
+
+    return addedArtist;
   }
 
-  getAllArtists(): ArtistDto[] {
-    return this.artists;
+  async getAllArtists(): Promise<ArtistDto[]> {
+    const responseArtists = await this.prisma.artists.findMany();
+
+    return responseArtists;
   }
 
-  getArtist(id: string): ArtistDto {
-    if (!this.artists.some((a) => a.id === id)) {
+  async getArtist(id: string): Promise<ArtistDto> {
+    const findArtist = await this.prisma.artists.findUnique({
+      where: { id: id },
+    });
+    if (!findArtist?.id) {
       throw new NotFoundException();
     }
-    const findArtist = this.artists.find((a) => a.id === id);
+
     return findArtist;
   }
 
-  updateArtist(
+  async updateArtist(
     updatedArtist: Partial<Pick<ArtistDto, 'id'>> &
       Partial<Omit<ArtistDto, 'id'>>,
     id: string,
-  ): ArtistDto {
-    const findArtistIndex = this.artists.findIndex((t) => t.id === id);
-    if (findArtistIndex === -1) {
+  ): Promise<ArtistDto> {
+    if (!Object.keys(updatedArtist).length) {
+      throw new BadRequestException();
+    }
+    const findArtist = await this.prisma.artists.findUnique({
+      where: { id: id },
+    });
+
+    if (!findArtist?.id) {
       throw new NotFoundException();
     }
-    this.artists[findArtistIndex] = {
-      ...this.artists[findArtistIndex],
-      ...updatedArtist,
-    };
-    return this.artists[findArtistIndex];
+
+    await this.prisma.artists.update({
+      where: { id: id },
+      data: {
+        name: updatedArtist.name,
+        grammy: updatedArtist.grammy,
+      },
+    });
+
+    const changedArtist = await this.prisma.artists.findUnique({
+      where: { id: id },
+    });
+    return changedArtist;
   }
 
-  deleteArtist(id: string) {
-    const findArtistIndex = this.artists.findIndex((a) => a.id === id);
-    if (findArtistIndex === -1) {
+  async deleteArtist(id: string) {
+    const findArtist = await this.prisma.artists.findUnique({
+      where: { id: id },
+    });
+    if (!findArtist?.id) {
       throw new NotFoundException();
     }
-    this.artists.splice(findArtistIndex, 1);
-    this.trackService.deleteArtistId(id);
-    this.albumService.deleteArtistId(id);
+    await this.prisma.artists.delete({ where: { id: id } });
+    await this.trackService.deleteArtistId(id);
+    await this.albumService.deleteArtistId(id);
+
+    return;
   }
 }

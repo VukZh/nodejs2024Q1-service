@@ -29,9 +29,8 @@ CREATE TABLE albums (
 );
 
 CREATE TABLE favorites (
-  id SERIAL PRIMARY KEY,
-  user_id UUID NOT NULL,
-  artists UUID[] NOT NULL,
-  albums UUID[] NOT NULL,
-  tracks UUID[] NOT NULL
+    id SERIAL PRIMARY KEY,
+    artists TEXT[],
+    albums TEXT[],
+    tracks TEXT[]
 );

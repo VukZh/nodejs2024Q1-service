@@ -44,7 +44,7 @@ export class UserController {
   async getUser(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UserDtoWithoutPassword> {
-    return this.userService.getUser(id);
+    return await this.userService.getUser(id);
   }
 
   @ApiCreatedResponse({

@@ -29,7 +29,7 @@ export class ArtistController {
   @ApiOkResponse({ status: 200, description: 'Artists received' })
   @Get()
   async getAllArtists(): Promise<ArtistDto[]> {
-    return this.artistService.getAllArtists();
+    return await this.artistService.getAllArtists();
   }
 
   @ApiOkResponse({ status: 200, description: 'Artist is retrieved by his id' })
@@ -37,7 +37,7 @@ export class ArtistController {
   @ApiNotFoundResponse({ status: 404, description: 'Artist doesn`t exist' })
   @Get('/:id')
   async getArtist(@Param('id', ParseUUIDPipe) id: string): Promise<ArtistDto> {
-    return this.artistService.getArtist(id);
+    return await this.artistService.getArtist(id);
   }
 
   @ApiCreatedResponse({
@@ -52,7 +52,7 @@ export class ArtistController {
   @UsePipes(new ValidationPipe())
   @Post()
   async addArtist(@Body() body: ArtistDto): Promise<ArtistDto> {
-    return this.artistService.createArtist(body);
+    return await this.artistService.createArtist(body);
   }
 
   @ApiOkResponse({ status: 200, description: 'Artist updated' })
@@ -64,7 +64,7 @@ export class ArtistController {
     @Body() body: ArtistDto,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<ArtistDto> {
-    return this.artistService.updateArtist(body, id);
+    return await this.artistService.updateArtist(body, id);
   }
 
   @ApiResponse({ status: 204, description: 'Artist deleted' })
@@ -73,6 +73,6 @@ export class ArtistController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:id')
   async deleteArtist(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.artistService.deleteArtist(id);
+    return await this.artistService.deleteArtist(id);
   }
 }

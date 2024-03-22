@@ -11,7 +11,7 @@ import { PrismaService } from '../prisma.service';
 export class TrackService {
   constructor(private prisma: PrismaService) {}
 
-  private readonly tracks: TrackDto[] = [];
+  // private readonly tracks: TrackDto[] = [];
 
   async createTrack(track: TrackDto) {
     const newTrack = { ...track, id: uuidv4() };
@@ -70,11 +70,12 @@ export class TrackService {
   }
 
   async updateTrack(updatedTrack: TrackDto, id: string): Promise<TrackDto> {
-
     if (!Object.keys(updatedTrack).length) {
       throw new BadRequestException();
     }
-    const findTrack = await this.prisma.users.findUnique({ where: { id: id } });
+    const findTrack = await this.prisma.tracks.findUnique({
+      where: { id: id },
+    });
 
     if (!findTrack?.id) {
       throw new NotFoundException();
@@ -114,17 +115,39 @@ export class TrackService {
     return;
   }
 
-  deleteArtistId(id: string) {
-    const foundTrackIndex = this.tracks.findIndex((t) => t.artistId === id);
-    if (foundTrackIndex !== -1) {
-      this.tracks[foundTrackIndex].artistId = null;
+  async deleteArtistId(id: string) {
+    const findTrack = await this.prisma.tracks.findFirst({
+      where: { artist_id: id },
+    });
+
+    if (findTrack?.name) {
+      await this.prisma.tracks.update({
+        where: { id: findTrack.id },
+        data: {
+          name: findTrack.name,
+          album_id: findTrack.album_id,
+          artist_id: null,
+          duration: findTrack.duration,
+        },
+      });
     }
   }
 
-  deleteAlbumId(id: string) {
-    const foundTrackIndex = this.tracks.findIndex((t) => t.albumId === id);
-    if (foundTrackIndex !== -1) {
-      this.tracks[foundTrackIndex].albumId = null;
+  async deleteAlbumId(id: string) {
+    const findTrack = await this.prisma.tracks.findFirst({
+      where: { album_id: id },
+    });
+
+    if (findTrack?.name) {
+      await this.prisma.tracks.update({
+        where: { id: findTrack.id },
+        data: {
+          name: findTrack.name,
+          album_id: null,
+          artist_id: findTrack.artist_id,
+          duration: findTrack.duration,
+        },
+      });
     }
   }
 }

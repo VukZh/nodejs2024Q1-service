@@ -27,7 +27,8 @@ export class FavoritesController {
   @ApiOkResponse({ status: 200, description: 'Albums received' })
   @Get()
   async getFavorites(): Promise<FavoritesResponse> {
-    return this.favoritesService.getFavorites();
+    await this.favoritesService.setInitialFavorites();
+    return await this.favoritesService.getFavorites();
   }
 
   @ApiResponse({ status: 201, description: 'Track add to the favorites' })
@@ -38,7 +39,7 @@ export class FavoritesController {
   })
   @Post('track/:id')
   async addTrackToFavs(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.favoritesService.addTrackToFavs(id);
+    return await this.favoritesService.addTrackToFavs(id);
   }
 
   @ApiResponse({ status: 201, description: 'Album add to the favorites' })
@@ -49,7 +50,7 @@ export class FavoritesController {
   })
   @Post('album/:id')
   async addAlbumToFavs(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.favoritesService.addAlbumToFavs(id);
+    return await this.favoritesService.addAlbumToFavs(id);
   }
 
   @ApiResponse({ status: 201, description: 'Artist add to the favorites' })
@@ -60,7 +61,7 @@ export class FavoritesController {
   })
   @Post('artist/:id')
   async addArtistToFavs(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-    return this.favoritesService.addArtistToFavs(id);
+    return await this.favoritesService.addArtistToFavs(id);
   }
 
   @ApiResponse({ status: 204, description: 'Track deleted from the favorites' })
@@ -74,7 +75,7 @@ export class FavoritesController {
   async deleteTrackFromFavs(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    return this.favoritesService.deleteTrackFromFavs(id);
+    return await this.favoritesService.deleteTrackFromFavs(id);
   }
 
   @ApiResponse({ status: 204, description: 'Album deleted from the favorites' })
@@ -88,7 +89,7 @@ export class FavoritesController {
   async deleteAlbumFromFavs(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    return this.favoritesService.deleteAlbumFromFavs(id);
+    return await this.favoritesService.deleteAlbumFromFavs(id);
   }
 
   @ApiResponse({
@@ -105,6 +106,6 @@ export class FavoritesController {
   async deleteArtistFromFavs(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<void> {
-    return this.favoritesService.deleteArtistFromFavs(id);
+    return await this.favoritesService.deleteArtistFromFavs(id);
   }
 }
