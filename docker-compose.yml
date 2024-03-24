@@ -15,10 +15,12 @@ services:
         source: rssdatapgl
         target: /var/lib/postgresql/data
     command: postgres -c log_statement=all
+    logging:
+      driver: local
     networks:
       - mynetwork
   nestjs_prisma:
-    image: vukfx/rss
+    image: vukfx/nestjs-prisma
     container_name: nestjs-prisma
     ports:
       - "${PORT}:${PORT}"
