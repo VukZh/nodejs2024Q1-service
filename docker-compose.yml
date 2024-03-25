@@ -4,7 +4,7 @@ services:
     image: vukfx/postgresql
     container_name: postgresql
     ports:
-      - "${DB_PORT}:${DB_PORT}"
+      - "${DB_PORT}:5432"
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -33,3 +33,4 @@ volumes:
   rssdatapgl:
 networks:
   mynetwork:
+    driver: bridge
