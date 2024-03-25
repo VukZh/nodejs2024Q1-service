@@ -20,9 +20,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "scan vulnerabilities": "docker scout cves vukfx/nestjs-prisma"
+    "scan vulnerabilities": "docker scout cves vukfx/nestjs-prisma & docker scout cves vukfx/postgresql",
+    "start:migrate:dev": "npx prisma migrate dev && nest start --watch"
   },
   "dependencies": {
+    "@nestjs/cli": "^10.3.2",
     "@nestjs/common": "^10.3.3",
     "@nestjs/core": "^10.3.3",
     "@nestjs/jwt": "^10.2.0",
@@ -41,7 +43,6 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.3.2",
     "@nestjs/schematics": "^10.1.1",
     "@nestjs/testing": "^10.3.3",
     "@types/bcrypt": "^5.0.2",

@@ -13,6 +13,6 @@ COPY package*.json ./
 RUN npm install --only=production
 COPY . .
 COPY --from=development /app/dist ./dist
-COPY --chown=node:node --from=development /app/node_modules/.prisma/client  ./node_modules/.prisma/client
-EXPOSE 4000
-CMD ["node", "dist/main"]
+COPY --from=development /app/node_modules/.prisma/client  ./node_modules/.prisma/client
+EXPOSE $PORT
+CMD ["npm", "run", "start:migrate:dev"]
